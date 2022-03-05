@@ -1,15 +1,26 @@
+import React from "react";
+import { useState } from "react/cjs/react.development";
+import Router from "next/router";
 import fetcher from "../../lib/fetcher";
 import { GET_SINGLE_POST, GET_ALL_SLUGS } from "../../lib/wordpress/posts";
 import { useRouter } from "next/router";
 
 export default function single_post({ postData }) {
-	const { id, title, content, slug } = postData.post;
+	// const { id, title, content, slug } = postData.post;
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
+	Router.events.on("routeChangeStart", (url) => {
+		setLoading(true);
+	});
 
-	if (!router.isFallback && !slug) {
-		return <ErrorPage statusCode={404} />;
-	}
-	return <>{router.isFallback ? <h1>ładuje</h1> : <h1>załadowane</h1>}</>;
+	Router.events.on("routeChangeComplete", (url) => {
+		setLoading(false);
+	});
+	console.log(Router);
+	// if (!router.isFallback && !slug) {
+	// 	return <ErrorPage statusCode={404} />;
+	// }
+	return <>{loading ? <h1>LOADING</h1> : <h1>ZAŁADOWANE</h1>}</>;
 }
 
 export async function getStaticPaths() {
